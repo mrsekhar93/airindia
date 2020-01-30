@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <apikit:config name="airindiaapi-config" api="airindiaapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="airindiaapi-main">
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8c243c31-6a3e-45e5-978f-66259179a4f5" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="airindiaapi-main">
         <http:listener path="/api/*" config-ref="HTTP_Listener_config">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
@@ -122,5 +126,25 @@ output application/json
     </flow>
     <flow name="get:\airIndiaFlights:airindiaapi-config">
         <logger level="INFO" message="get:\airIndiaFlights:airindiaapi-config" />
+		<ee:transform doc:name="Transform Message" doc:id="93bb6de4-ff15-4e15-848e-819929d90d8e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": [
+    {
+      "accountId": 22,
+      "dateOfBirth": "2015-05-11",
+      "gender": "male",
+      "maritalStatus": "married",
+      "phone": "8877445566",
+      "name": "ronybabu",
+      "email": "raj@gmail.com"
+    }
+  ]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
 </mule>
