@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: airindia API
+baseUri: http://localhost:8081/api
+
+types: 
+  Flight: !include datatypes/Flight.raml
+
+/airIndiaFlights:
+  get:   
+    queryParameters: 
+       from:
+       to:
+       depatureDate:
+    responses: 
+       200:
+        body: 
+         application/json: 
+           type: Flight
